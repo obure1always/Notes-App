@@ -16,7 +16,7 @@ class _NotesPageState extends State<NotesPage> {
   @override
   void initState() {
     super.initState();
-    context.read<NotesBloc>().add(FetchNotesEvent());
+    context.read<NotesBloc>().add(const FetchNotesEvent());
   }
 
   @override
@@ -28,7 +28,7 @@ class _NotesPageState extends State<NotesPage> {
         actions: [
           IconButton(
             onPressed: () {
-              context.read<AuthBloc>().add(LogoutEvent());
+              context.read<AuthBloc>().add(const LogoutEvent());
             },
             icon: const Icon(Icons.logout),
           ),
