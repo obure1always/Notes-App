@@ -17,7 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.loginUseCase,
     required this.signUpUseCase,
     required this.logoutUseCase,
-  }) : super(AuthInitial()) {
+  }) : super(const AuthInitial()) {
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
     on<LoginEvent>(_onLogin);
     on<SignUpEvent>(_onSignUp);
@@ -29,40 +29,40 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (user != null) {
       emit(AuthAuthenticated(user));
     } else {
-      emit(AuthUnauthenticated());
+      emit(const AuthUnauthenticated());
     }
   }
 
   Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
-    emit(AuthLoading());
+    emit(const AuthLoading());
     try {
       final userCredential = await loginUseCase(event.email, event.password);
       emit(AuthAuthenticated(userCredential.user!));
     } on FirebaseAuthException catch (e) {
       emit(AuthError(_getErrorMessage(e.code)));
     } catch (e) {
-      emit(AuthError('An unexpected error occurred'));
+      emit(const AuthError('An unexpected error occurred'));
     }
   }
 
   Future<void> _onSignUp(SignUpEvent event, Emitter<AuthState> emit) async {
-    emit(AuthLoading());
+    emit(const AuthLoading());
     try {
       final userCredential = await signUpUseCase(event.email, event.password);
       emit(AuthAuthenticated(userCredential.user!));
     } on FirebaseAuthException catch (e) {
       emit(AuthError(_getErrorMessage(e.code)));
     } catch (e) {
-      emit(AuthError('An unexpected error occurred'));
+      emit(const AuthError('An unexpected error occurred'));
     }
   }
 
   Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
     try {
       await logoutUseCase();
-      emit(AuthUnauthenticated());
+      emit(const AuthUnauthenticated());
     } catch (e) {
-      emit(AuthError('Failed to logout'));
+      emit(const AuthError('Failed to logout'));
     }
   }
 
