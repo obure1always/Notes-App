@@ -1,8 +1,6 @@
-import 'package:get_it/get_it.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../data/datasources/auth_remote_data_source.dart';
-import '../../data/datasources/notes_remote_data_source.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../data/datasources/auth_local_data_source.dart';
+import '../../data/datasources/notes_local_data_source.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../data/repositories/notes_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -17,19 +15,37 @@ import '../../domain/usecases/notes/update_note_usecase.dart';
 import '../../presentation/bloc/auth/auth_bloc.dart';
 import '../../presentation/bloc/notes/notes_bloc.dart';
 
-final sl = GetIt.instance;
+class ServiceLocator {
+  static final ServiceLocator _instance = ServiceLocator._internal();
+  factory ServiceLocator() => _instance;
+  ServiceLocator._internal();
+
+  final Map<Type, dynamic> _services = {};
+
+  T get<T>() => _services[T] as T;
+
+  void registerLazySingleton<T>(T Function() factory) {
+    _services[T] = factory();
+  }
+
+  void registerFactory<T>(T Function() factory) {
+    _services[T] = factory;
+  }
+}
+
+final sl = ServiceLocator();
 
 Future<void> init() async {
   // External
-  sl.registerLazySingleton(() => FirebaseAuth.instance);
-  sl.registerLazySingleton(() => FirebaseFirestore.instance);
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton(() => sharedPreferences);
 
   // Data sources
-  sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(sl()),
+  sl.registerLazySingleton<AuthLocalDataSource>(
+    () => AuthLocalDataSourceImpl(sl()),
   );
-  sl.registerLazySingleton<NotesRemoteDataSource>(
-    () => NotesRemoteDataSourceImpl(sl(), sl()),
+  sl.registerLazySingleton<NotesLocalDataSource>(
+    () => NotesLocalDataSourceImpl(sl()),
   );
 
   // Repositories
@@ -37,7 +53,7 @@ Future<void> init() async {
     () => AuthRepositoryImpl(sl()),
   );
   sl.registerLazySingleton<NotesRepository>(
-    () => NotesRepositoryImpl(sl()),
+    () => NotesRepositoryImpl(sl(), sl()),
   );
 
   // Use cases
