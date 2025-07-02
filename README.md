@@ -31,25 +31,22 @@ The app follows Clean Architecture principles with the following layers:
 - **Pages**: UI screens
 - **Widgets**: Reusable UI components
 
-## Project Structure
-
-\`\`\`
+## project Structure
 lib/
 ├── core/
 │   └── di/                 # Dependency injection
 ├── data/
 │   ├── datasources/        # Remote data sources
-│   ├── models/            # Data models
-│   └── repositories/      # Repository implementations
+│   ├── models/             # Data models
+│   └── repositories/       # Repository implementations
 ├── domain/
-│   ├── entities/          # Business entities
-│   ├── repositories/      # Repository interfaces
-│   └── usecases/         # Business logic
+│   ├── entities/           # Business entities
+│   ├── repositories/       # Repository interfaces
+│   └── usecases/           # Business logic
 └── presentation/
-    ├── bloc/             # BLoC state management
-    ├── pages/            # UI screens
-    └── widgets/          # Reusable widgets
-\`\`\`
+    ├── bloc/               # BLoC state management
+    ├── pages/              # UI screens
+    └── widgets/            # Reusable widgets
 
 ## Setup Instructions
 
